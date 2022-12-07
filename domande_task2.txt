@@ -1,0 +1,11 @@
+Per ogni risposta sono consentiti al massimo 600 caratteri 
+(spazi, codice senza commenti e formule escluse).
+
+1)  Spiegare il comportamento dell’AP. 
+    Cosa succede fin dal primo momento dell’inizio della simulazione? 
+
+2) Analizzare il beacon frame. Quali sono le sue parti più rilevanti? 
+    Specificare il filtro Wireshark ed il file utilizzati per l’analisi. 
+
+3) Come per il Task 1, forzare l’uso di RTS/CTS nella rete utilizzando il parametro “useRtsCts”: 
+    o Ci sono delle collisioni adesso? Spiegare il perché. 

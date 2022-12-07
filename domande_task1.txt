@@ -1,0 +1,16 @@
+Per ogni risposta sono consentiti al massimo 600 caratteri 
+(spazi, codice senza commenti e formule escluse).
+
+1) Tutti i frame ricevono l’acknoledgement? Spiegare perché.  
+
+2) Vi sono delle collisioni nella rete? Spiegare perché. Come sei arrivato a questa conclusione? 
+
+3) Come si può forzare i nodi ad utilizzare la procedura di handshake RTS/CTS vista in classe? 
+    Quale’è il ragionamento dietro questa procedura?  
+
+4) Forzare l’uso di RTS/CTS nella rete utilizzando il parametro useRtsCts: 
+    o Ci sono delle collisioni adesso? 
+    o Quali sono i benefici di RTS/CTS? 
+    o Dove si può trovare ed analizzare le informazioni relative al Network Allocation Vector? 
+    
+• 5) Calcolare il throughput medio complessivo delle applicazioni
