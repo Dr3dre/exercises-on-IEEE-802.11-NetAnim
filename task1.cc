@@ -51,7 +51,7 @@ main(int argc, char* argv[]) {
     }
 
     if (useRtsCts) {
-        Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("0"));
+        Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
     }
    
     NodeContainer allNodes;
@@ -87,8 +87,7 @@ main(int argc, char* argv[]) {
     address.SetBase("192.168.1.0", "255.255.255.0");        //CHECK correttezza
     Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
-    //     o Assumere che ogni nodo si comporta come un router ideale e scambia la sua routing table in background 
-    //         (e.g., ogni 30 secondi) con i suoi vicini
+    //     o Assumere che ogni nodo si comporta come un router ideale e scambia la sua routing table in background
     Ipv4GlobalRoutingHelper::PopulateRoutingTables();
 
     // • Transport Layer: 
@@ -112,7 +111,7 @@ main(int argc, char* argv[]) {
     client.SetAttribute("PacketSize", UintegerValue(512));      // o Packet size: 512 bytes 
     apps = client.Install(allNodes.Get(4));
     apps.Start(Seconds(1.0));
-    apps.Stop(Seconds(2.0));
+    apps.Stop(Seconds(10.0));        //CHECK correttezza
 
     //     o UDP Echo Client sul Nodo 3 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 2s e 4s 
@@ -145,7 +144,7 @@ main(int argc, char* argv[]) {
     {    //     o NetAnim: se abilitato, la simulazione deve poter generare un file “wireless-task1-rts-<state>.xml” 
         //         (dove <state> è “on” se il parametro useRtsCts è vero oppure in caso contrario “off”)
         //         e deve abilitare i metadati dei pacchetti ed il tracing dei PHY e MAC counters. 
-        AnimationInterface anim("wireless-task1-rts-" + std::to_string(useRtsCts) + ".xml");
+        AnimationInterface anim("wireless-task1-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml");
         anim.EnablePacketMetadata(true);
         anim.EnableWifiPhyCounters(Seconds(0), Seconds(10));
         anim.EnableWifiMacCounters(Seconds(0), Seconds(10));
@@ -174,6 +173,7 @@ main(int argc, char* argv[]) {
 
     NS_LOG_INFO("Run Simulation.");
     Simulator::Run();
+    Simulator::Stop(Seconds(15.0));
     Simulator::Destroy();
     NS_LOG_INFO("Done.");
 
