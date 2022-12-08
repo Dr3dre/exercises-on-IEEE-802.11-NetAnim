@@ -28,7 +28,7 @@ main(int argc, char* argv[]) {
     // simulare una Wireless Local Area Network (WLAN) che opera in modalità Ad-hoc con 5 nodi. 
     uint32_t nWifi = 5;
     bool useRtsCts = false;
-    bool verbose = false;
+    bool verbose = true;
     bool useNetAnim = false;
     
     // o Alla simulazione deve essere possibile passare tre diversi parametri da riga di comando: 
@@ -49,17 +49,21 @@ main(int argc, char* argv[]) {
         LogComponentEnable("UdpEchoClientApplication", LOG_LEVEL_INFO);
         LogComponentEnable("UdpEchoServerApplication", LOG_LEVEL_INFO);
     }
-
+    
+    UintegerValue rtsctsThreshold = UintegerValue(5000);
     if (useRtsCts) {
-        Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
+        rtsctsThreshold=UintegerValue(500);
     }
+                
+    Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", rtsctsThreshold);
+
    
     NodeContainer allNodes;
     allNodes.Create(nWifi);
     
     // • Canale: canale wireless di default su ns-3 (YansWifiChannel ?)
     YansWifiChannelHelper channel = YansWifiChannelHelper::Default();
-    YansWifiPhyHelper phy = YansWifiPhyHelper::Default();
+    YansWifiPhyHelper phy ;
     phy.SetChannel(channel.Create());
 
     // • Physical Layer: 
@@ -72,7 +76,7 @@ main(int argc, char* argv[]) {
     // • Link Layer: 
     //     o Standard MAC senza nessun controllo sulla Quality of Service; 
     //     o Ricorda: la rete opera in ad-hoc mode 
-    WifiMacHelper mac = WifiMacHelper::Default();
+    WifiMacHelper mac;
     mac.SetType("ns3::AdhocWifiMac");
 
     // • Network Layer: 
@@ -156,6 +160,7 @@ main(int argc, char* argv[]) {
         //              <id> rappresenta il Node ID del singolo nodo (e.g., “1”, “2”, etc.). 
         for (uint32_t i = 0; i < allNodes.GetN(); i++) {
             Ptr<Node> node = allNodes.Get(i);
+            printf("%d\n",node->GetId());
             if (i == 0) {
                 anim.UpdateNodeDescription(node, "SRV-" + std::to_string(node->GetId()));
                 anim.UpdateNodeColor(node, 255, 0, 0);
@@ -171,9 +176,11 @@ main(int argc, char* argv[]) {
         }
     }
 
+    phy.EnablePcapAll("adhoc",true);
+
     NS_LOG_INFO("Run Simulation.");
-    Simulator::Run();
     Simulator::Stop(Seconds(15.0));
+    Simulator::Run();
     Simulator::Destroy();
     NS_LOG_INFO("Done.");
 
