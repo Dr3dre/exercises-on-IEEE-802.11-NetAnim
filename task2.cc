@@ -176,9 +176,9 @@ main(int argc, char* argv[]) {
     //     o NetAnim: se abilitato, la simulazione deve poter generare un file “wireless-task2-rts-<state>.xml” 
     //     (dove <state> è “on” se il parametro useRtsCts è vero oppure in caso contrario “off”)
     //     e deve abilitare i metadati dei pacchetti ed il tracing dei PHY e MAC counters. 
+    AnimationInterface anim("wireless-task2-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml");
     if(useNetAnim)
     {
-        AnimationInterface anim("wireless-task2-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml");
         anim.EnablePacketMetadata(true);
         anim.EnableWifiPhyCounters(Seconds(0), Seconds(5));
         anim.EnableWifiMacCounters(Seconds(0), Seconds(5));
