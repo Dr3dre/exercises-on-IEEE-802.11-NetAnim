@@ -129,13 +129,32 @@ main(int argc, char* argv[]) {
     // definita dal suo angolo in basso a sinistra (coordinate x= -90 m, y= -90 m) 
     // e dal suo angolo in alto a destra (x = 90 m, y = 90 m).
     MobilityHelper mobility;
-    mobility.SetPositionAllocator("ns3::RandomRectanglePositionAllocator",
+    // prima configurazione:
+    /*mobility.SetPositionAllocator("ns3::RandomRectanglePositionAllocator",
         "X", StringValue("ns3::UniformRandomVariable[Min=-90.0|Max=90.0]"),
         "Y", StringValue("ns3::UniformRandomVariable[Min=-90.0|Max=90.0]"));
     mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel",
         "Bounds", RectangleValue(Rectangle(-90, 90, -90, 90)));
-    mobility.Install(allNodes);
+    mobility.Install(allNodes);*/
 
+    // muova configurazione, da wireless-animation.cc
+    mobility.SetPositionAllocator("ns3::GridPositionAllocator",
+                                  "MinX",
+                                  DoubleValue(10.0),
+                                  "MinY",
+                                  DoubleValue(10.0),
+                                  "DeltaX",
+                                  DoubleValue(5.0),
+                                  "DeltaY",
+                                  DoubleValue(2.0),
+                                  "GridWidth",
+                                  UintegerValue(5),
+                                  "LayoutType",
+                                  StringValue("RowFirst"));
+    mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel",
+                              "Bounds",
+                              RectangleValue(Rectangle(-90, 90, -90, 90)));
+    mobility.Install(allNodes);
 
     // • Informazioni addizionali: 
     //     o Il packet tracer deve essere inserito esclusivamente sul Nodo 2 
