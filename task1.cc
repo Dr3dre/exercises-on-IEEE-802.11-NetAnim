@@ -27,9 +27,9 @@ main(int argc, char* argv[]) {
 
     // simulare una Wireless Local Area Network (WLAN) che opera in modalità Ad-hoc con 5 nodi. 
     uint32_t nWifi = 5;
-    bool useRtsCts = false;
+    bool useRtsCts = true;
     bool verbose = true;
-    bool useNetAnim = false;
+    bool useNetAnim = true;
     
     // o Alla simulazione deve essere possibile passare tre diversi parametri da riga di comando: 
     //          useRtsCts: booleano (valore di default: false), se vero viene forzato l’utilizzo 
@@ -102,28 +102,31 @@ main(int argc, char* argv[]) {
     NS_LOG_INFO("Create UdpEchoServer application on node 0.");
     uint16_t port = 20;
     UdpEchoServerHelper server(port);
-    ApplicationContainer apps = server.Install(allNodes.Get(0));
-    apps.Start(Seconds(1.0));
-    apps.Stop(Seconds(10.0));
+    ApplicationContainer serverapp = server.Install(allNodes.Get(0));
+    serverapp.Start(Seconds(1.0));
+    serverapp.Stop(Seconds(10.0));
 
     //     o UDP Echo Client sul Nodo 4 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 1s e 2s 
     NS_LOG_INFO("Create UdpEchoClient application on node 4.");
-    UdpEchoClientHelper client(interfaces.GetAddress(0), port);
-    client.SetAttribute("MaxPackets", UintegerValue(2));
-    client.SetAttribute("Interval", TimeValue(Seconds(1.0)));
-    client.SetAttribute("PacketSize", UintegerValue(512));      // o Packet size: 512 bytes 
-    apps = client.Install(allNodes.Get(4));
-    apps.Start(Seconds(1.0));
-    apps.Stop(Seconds(10.0));        //CHECK correttezza
+    UdpEchoClientHelper client1(interfaces.GetAddress(0), port);
+    client1.SetAttribute("MaxPackets", UintegerValue(2));
+    client1.SetAttribute("Interval", TimeValue(Seconds(1.0)));
+    client1.SetAttribute("PacketSize", UintegerValue(512));      // o Packet size: 512 bytes 
+    ApplicationContainer client1app = client1.Install(allNodes.Get(4));
+    client1app.Start(Seconds(1.0));
+    client1app.Stop(Seconds(10.0));        //CHECK correttezza
 
     //     o UDP Echo Client sul Nodo 3 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 2s e 4s 
     NS_LOG_INFO("Create UdpEchoClient application on node 3.");
-    client.SetAttribute("RemoteAddress", AddressValue(interfaces.GetAddress(0)));
-    apps = client.Install(allNodes.Get(3));
-    apps.Start(Seconds(2.0));
-    apps.Stop(Seconds(4.0));
+    UdpEchoClientHelper client2(interfaces.GetAddress(0), port);
+    client2.SetAttribute("MaxPackets", UintegerValue(2));
+    client2.SetAttribute("Interval", TimeValue(Seconds(2.0)));
+    client2.SetAttribute("PacketSize", UintegerValue(512)); 
+    ApplicationContainer client2app = client2.Install(allNodes.Get(3));
+    client2app.Start(Seconds(2.0));
+    client2app.Stop(Seconds(4.1));
 
     // I nodi si muovono seguendo come modello di mobilità il 2D Random Walk in un’area rettangolare 
     // definita dal suo angolo in basso a sinistra (coordinate x= -90 m, y= -90 m) 
@@ -158,10 +161,10 @@ main(int argc, char* argv[]) {
 
     // • Informazioni addizionali: 
     //     o Il packet tracer deve essere inserito esclusivamente sul Nodo 2 
-    UdpTraceClientHelper udpTraceClient(interfaces.GetAddress(1), port, "");
-    apps = udpTraceClient.Install(allNodes.Get(2));
-    apps.Start(Seconds(1.0));
-    apps.Stop(Seconds(10.0));
+    UdpTraceClientHelper udpTraceClient(interfaces.GetAddress(0), port, "");
+    ApplicationContainer udpTraceClientapp = udpTraceClient.Install(allNodes.Get(2));
+    udpTraceClientapp.Start(Seconds(1.0));
+    udpTraceClientapp.Stop(Seconds(10.0));
 
     //AnimationInterface anim;
     AnimationInterface anim("wireless-task1-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml");
