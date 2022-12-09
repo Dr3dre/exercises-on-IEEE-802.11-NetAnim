@@ -161,10 +161,8 @@ main(int argc, char* argv[]) {
 
     // • Informazioni addizionali: 
     //     o Il packet tracer deve essere inserito esclusivamente sul Nodo 2 
-    UdpTraceClientHelper udpTraceClient(interfaces.GetAddress(0), port, "");
-    ApplicationContainer udpTraceClientapp = udpTraceClient.Install(allNodes.Get(2));
-    udpTraceClientapp.Start(Seconds(1.0));
-    udpTraceClientapp.Stop(Seconds(10.0));
+    // per ora ci teniamo tutte le catture
+    phy.EnablePcapAll("adhoc",true);
 
     //AnimationInterface anim;
     AnimationInterface anim("wireless-task1-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml");
@@ -198,8 +196,6 @@ main(int argc, char* argv[]) {
             }
         }
     }
-
-    phy.EnablePcapAll("adhoc",true);
 
     NS_LOG_INFO("Run Simulation.");
     Simulator::Stop(Seconds(15.0));
