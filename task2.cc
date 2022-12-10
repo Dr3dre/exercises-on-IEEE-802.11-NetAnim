@@ -41,9 +41,9 @@ main(int argc, char* argv[]) {
     //             Notare che il valore da utilizzare per la vostra analisi (con e senza RTS/CTS) 
     //             è quello indicato all’inizio del paragrafo del Task 2.
     CommandLine cmd;
-    bool useRtsCts = false;
-    bool verbose = false;
-    bool useNetAnim = false;
+    bool useRtsCts = true;
+    bool verbose = true;
+    bool useNetAnim = true;
     std::string ssid = "TLC2022";
 
     cmd.AddValue("useRtsCts", "Enable RTS/CTS", useRtsCts);
@@ -57,9 +57,12 @@ main(int argc, char* argv[]) {
         LogComponentEnable("UdpEchoServerApplication", LOG_LEVEL_INFO);
     }
 
-    if(useRtsCts) {
-        Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("2200"));
+    UintegerValue rtsctsThreshold = UintegerValue(5000);
+    if (useRtsCts) {
+        rtsctsThreshold=UintegerValue(500);
     }
+
+    Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", rtsctsThreshold);
 
     NodeContainer allNodes;
     NodeContainer wifiStaNodes;
@@ -72,11 +75,11 @@ main(int argc, char* argv[]) {
     // Il nome della rete (SSID) deve essere passato tramite linea di comando usando il parametro “ssid” 
     // e per le vostre simulazioni deve essere la somma delle vostre matricole in stringa.
     
-    ssid = ""; //TODO: inserire la somma delle matricole in stringa
+    ssid = std::to_string(1933744 + 1945149 + 1960602 + 1943362);
 
     // • Canale: canale wireless di default su ns-3 
     YansWifiChannelHelper channel = YansWifiChannelHelper::Default();
-    YansWifiPhyHelper phy = YansWifiPhyHelper::Default();
+    YansWifiPhyHelper phy ;
     phy.SetChannel(channel.Create());
 
     // • Physical Layer: 
@@ -89,12 +92,13 @@ main(int argc, char* argv[]) {
     // • Link Layer: 
     //     o Standard MAC senza nessun controllo sulla Quality of Service; 
     //     o Ricorda: la rete opera in infrastructure mode 
-    WifiMacHelper mac = WifiMacHelper::Default();
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid), "ActiveProbing", BooleanValue(false));  //CHECK correttezza
+    WifiMacHelper mac ;
+    Ssid ssidobj = Ssid(ssid);
+    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssidobj), "ActiveProbing", BooleanValue(false),"QosSupported",BooleanValue(false));  //CHECK correttezza
 
     NetDeviceContainer staDevices;
     staDevices = wifi.Install(phy, mac, wifiStaNodes);
-    mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
+    mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssidobj),"QosSupported",BooleanValue(false));
 
     NetDeviceContainer apDevices;
     apDevices = wifi.Install(phy, mac, wifiApNode);
@@ -130,7 +134,7 @@ main(int argc, char* argv[]) {
     //     o UDP Echo Client sul Nodo 3 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 2s e 4s 
     NS_LOG_INFO("Create UdpEchoClient on Node 3");
-    UdpEchoClientHelper echoClient(interfaces.GetAddress(0), 21);
+    UdpEchoClientHelper echoClient(staInterfaces.GetAddress(0), 21);
     echoClient.SetAttribute("MaxPackets", UintegerValue(2));
     echoClient.SetAttribute("Interval", TimeValue(Seconds(2.0)));
     echoClient.SetAttribute("PacketSize", UintegerValue(512));      //  o Packet size: 512 bytes
@@ -141,7 +145,7 @@ main(int argc, char* argv[]) {
     //     o UDP Echo Client sul Nodo 4 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 1s e 4s 
     NS_LOG_INFO("Create UdpEchoClient on Node 4");
-    UdpEchoClientHelper echoClient2(interfaces.GetAddress(0), 21);
+    UdpEchoClientHelper echoClient2(staInterfaces.GetAddress(0), 21);
     echoClient2.SetAttribute("MaxPackets", UintegerValue(2));
     echoClient2.SetAttribute("Interval", TimeValue(Seconds(3.0)));
     echoClient2.SetAttribute("PacketSize", UintegerValue(512));      //  o Packet size: 512 bytes
@@ -153,25 +157,30 @@ main(int argc, char* argv[]) {
     // dal suo angolo in basso a sinistra (coordinate x= -90 m, y= -90 m)
     // e dal suo angolo in alto a destra (x = 90 m, y = 90 m). 
     MobilityHelper mobility;
-    mobility.SetPositionAllocator("ns3::RandomRectanglePositionAllocator",
-                                  "X", StringValue("ns3::UniformRandomVariable[Min=-90.0|Max=90.0]"),
-                                  "Y", StringValue("ns3::UniformRandomVariable[Min=-90.0|Max=90.0]"));
+    mobility.SetPositionAllocator("ns3::GridPositionAllocator",
+                                  "MinX",
+                                  DoubleValue(10.0),
+                                  "MinY",
+                                  DoubleValue(10.0),
+                                  "DeltaX",
+                                  DoubleValue(5.0),
+                                  "DeltaY",
+                                  DoubleValue(2.0),
+                                  "GridWidth",
+                                  UintegerValue(5),
+                                  "LayoutType",
+                                  StringValue("RowFirst"));
     mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel",
         "Bounds", RectangleValue(Rectangle(-90, 90, -90, 90)));
-    mobility.Install(allNodes);
+    mobility.Install(wifiStaNodes);
+    mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+    mobility.Install(wifiApNode);
 
     // • Informazioni addizionali: 
     //     o Il packet tracer deve essere inserito esclusivamente sul Nodo 4 (uno dei due clients) e 
     //     sull’AP 
-    UdpTraceClientHelper udpTraceClient(staInterfaces.GetAddress(3), 9, "");
-    apps = udpTraceClient.Install(wifiStaNodes.Get(3));
-    apps.Start(Seconds(1.0));
-    apps.Stop(Seconds(10.0));
-
-    UdpTraceClientHelper udpTraceAp(apInterface.GetAddress(0), 9, "");     // CHECK correttezza
-    apps = udpTraceAp.Install(wifiApNode.Get(0));
-    apps.Start(Seconds(1.0));
-    apps.Stop(Seconds(10.0));
+    //per ora ce li teniamo tutti anche qui
+    phy.EnablePcapAll("infrastructure",true);
 
     //     o NetAnim: se abilitato, la simulazione deve poter generare un file “wireless-task2-rts-<state>.xml” 
     //     (dove <state> è “on” se il parametro useRtsCts è vero oppure in caso contrario “off”)
@@ -204,8 +213,8 @@ main(int argc, char* argv[]) {
     }        
 
     NS_LOG_INFO("Run Simulation.");
-    Simulator::Run();
     Simulator::Stop(Seconds(15.0));
+    Simulator::Run();
     Simulator::Destroy();
     NS_LOG_INFO("Done.");
 

@@ -27,9 +27,9 @@ main(int argc, char* argv[]) {
 
     // simulare una Wireless Local Area Network (WLAN) che opera in modalità Ad-hoc con 5 nodi. 
     uint32_t nWifi = 5;
-    bool useRtsCts = true;
-    bool verbose = true;
-    bool useNetAnim = true;
+    bool useRtsCts = false;
+    bool verbose = false;
+    bool useNetAnim = false;
     
     // o Alla simulazione deve essere possibile passare tre diversi parametri da riga di comando: 
     //          useRtsCts: booleano (valore di default: false), se vero viene forzato l’utilizzo 
@@ -39,7 +39,6 @@ main(int argc, char* argv[]) {
     //          useNetAnim: booleano (valore di default: false), se è vero vengono generati tutti i 
     //             file relativi per NetAnim (vedi sopra)
     CommandLine cmd;
-    cmd.AddValue("nWifi", "Number of wifi STA devices", nWifi);     // default: 5
     cmd.AddValue("useRtsCts", "Enable RTS/CTS", useRtsCts);
     cmd.AddValue("verbose", "Enable verbose logs", verbose);
     cmd.AddValue("useNetAnim", "Enable NetAnim", useNetAnim);
@@ -77,7 +76,7 @@ main(int argc, char* argv[]) {
     //     o Standard MAC senza nessun controllo sulla Quality of Service; 
     //     o Ricorda: la rete opera in ad-hoc mode 
     WifiMacHelper mac;
-    mac.SetType("ns3::AdhocWifiMac");
+    mac.SetType("ns3::AdhocWifiMac","QosSupported",BooleanValue(false));
 
     // • Network Layer: 
     //     o Standard IPv4 
@@ -111,11 +110,11 @@ main(int argc, char* argv[]) {
     NS_LOG_INFO("Create UdpEchoClient application on node 4.");
     UdpEchoClientHelper client1(interfaces.GetAddress(0), port);
     client1.SetAttribute("MaxPackets", UintegerValue(2));
-    client1.SetAttribute("Interval", TimeValue(Seconds(1.0)));
+    client1.SetAttribute("Interval", TimeValue(Seconds(2.0)));
     client1.SetAttribute("PacketSize", UintegerValue(512));      // o Packet size: 512 bytes 
     ApplicationContainer client1app = client1.Install(allNodes.Get(4));
     client1app.Start(Seconds(1.0));
-    client1app.Stop(Seconds(10.0));        //CHECK correttezza
+    client1app.Stop(Seconds(2.1));        //CHECK correttezza
 
     //     o UDP Echo Client sul Nodo 3 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 2s e 4s 
