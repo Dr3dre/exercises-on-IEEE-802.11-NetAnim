@@ -43,7 +43,7 @@ main(int argc, char* argv[]) {
     CommandLine cmd;
     bool useRtsCts = true;
     bool verbose = true;
-    bool useNetAnim = true;
+    bool useNetAnim = false;
     std::string ssid = "TLC2022";
 
     cmd.AddValue("useRtsCts", "Enable RTS/CTS", useRtsCts);
@@ -211,6 +211,7 @@ main(int argc, char* argv[]) {
         anim.UpdateNodeDescription(allNodes.Get(5), "AP");
         anim.UpdateNodeColor(allNodes.Get(5), 66, 49, 137);
     }        
+    else remove(("wireless-task2-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml").c_str());
 
     NS_LOG_INFO("Run Simulation.");
     Simulator::Stop(Seconds(15.0));

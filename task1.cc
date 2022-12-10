@@ -110,7 +110,7 @@ main(int argc, char* argv[]) {
     NS_LOG_INFO("Create UdpEchoClient application on node 4.");
     UdpEchoClientHelper client1(interfaces.GetAddress(0), port);
     client1.SetAttribute("MaxPackets", UintegerValue(2));
-    client1.SetAttribute("Interval", TimeValue(Seconds(2.0)));
+    client1.SetAttribute("Interval", TimeValue(Seconds(1.0)));
     client1.SetAttribute("PacketSize", UintegerValue(512));      // o Packet size: 512 bytes 
     ApplicationContainer client1app = client1.Install(allNodes.Get(4));
     client1app.Start(Seconds(1.0));
@@ -121,7 +121,7 @@ main(int argc, char* argv[]) {
     NS_LOG_INFO("Create UdpEchoClient application on node 3.");
     UdpEchoClientHelper client2(interfaces.GetAddress(0), port);
     client2.SetAttribute("MaxPackets", UintegerValue(2));
-    client2.SetAttribute("Interval", TimeValue(Seconds(1.0)));
+    client2.SetAttribute("Interval", TimeValue(Seconds(2.0)));
     client2.SetAttribute("PacketSize", UintegerValue(512)); 
     ApplicationContainer client2app = client2.Install(allNodes.Get(3));
     client2app.Start(Seconds(2.0));
@@ -195,6 +195,7 @@ main(int argc, char* argv[]) {
             }
         }
     }
+    else remove(("wireless-task1-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml").c_str());
 
     NS_LOG_INFO("Run Simulation.");
     Simulator::Stop(Seconds(15.0));
@@ -204,3 +205,4 @@ main(int argc, char* argv[]) {
 
     return 0;
 }
+
