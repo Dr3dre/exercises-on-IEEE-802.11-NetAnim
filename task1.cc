@@ -121,7 +121,7 @@ main(int argc, char* argv[]) {
     NS_LOG_INFO("Create UdpEchoClient application on node 3.");
     UdpEchoClientHelper client2(interfaces.GetAddress(0), port);
     client2.SetAttribute("MaxPackets", UintegerValue(2));
-    client2.SetAttribute("Interval", TimeValue(Seconds(2.0)));
+    client2.SetAttribute("Interval", TimeValue(Seconds(1.0)));
     client2.SetAttribute("PacketSize", UintegerValue(512)); 
     ApplicationContainer client2app = client2.Install(allNodes.Get(3));
     client2app.Start(Seconds(2.0));
