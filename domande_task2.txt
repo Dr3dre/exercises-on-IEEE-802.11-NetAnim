@@ -3,10 +3,11 @@ Per ogni risposta sono consentiti al massimo 600 caratteri
 
 1)  Spiegare il comportamento dell’AP. 
     Cosa succede fin dal primo momento dell’inizio della simulazione? 
-
+l'access point sin dall'inizio della sua attività invia continuamente e regolarmente beacon frames. Queste frames permettono agli hosts di connettersi all'AP, come si può vedere dai primi pacchetti catturati da wireshark (un beacon frame, varie association requests, con annessi Acknowledgment). Durante tutta la comunicazione, l'AP svolge un ruolo da "mediatore": i pacchetti vengono trasmessi dagli hosts in broadcast con flag "To DS" pari a 1 e vengono ricevuti dall'AP, che risponde con messaggio di Acknowledgment, per poi inviarli in broadcast a tutti i terminali, con flag "From DS" pari a 1 e ricevere un acknowledgement dal terminale a cui era indirizzato.
 2) Analizzare il beacon frame. Quali sono le sue parti più rilevanti? 
     Specificare il filtro Wireshark ed il file utilizzati per l’analisi. 
-    filtro wireshark: wlan[0]==0x80
+filtro wireshark: wlan[0]==0x80
 
 3) Come per il Task 1, forzare l’uso di RTS/CTS nella rete utilizzando il parametro “useRtsCts”: 
     o Ci sono delle collisioni adesso? Spiegare il perché. 
+in questa task si verifica effettivamente una collisione a tempo t=4s, quando i nodi 3 e 4 provano contemporaneamente a trasmettere un pacchetto UDP. L'utilizzo del sistema di prenotazione della trasimissione, come è visibile anche dalle catture su Wireshark, elimina la collisione. Essa si evidenzia sempre dalla flag "Retry" del Frame Control Field dell'header del protocollo 802.11 che nel primo caso in cui si verifica la collisione è pari a 1 per i pacchetti UDP trasmessi dai nodi sopracitati. Come già detto per l'analisi del task1, in questa situazione solo i pacchetti RTS possono collidere, tuttavia, in virtù della loro esigua dimensione, ciò non si verifica.

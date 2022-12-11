@@ -2,15 +2,19 @@ Per ogni risposta sono consentiti al massimo 600 caratteri
 (spazi, codice senza commenti e formule escluse).
 
 1) Tutti i frame ricevono l’acknoledgement? Spiegare perché.  
-
+Tutti i frame che non sono frame di controllo del protocollo 802.11, cioè Wi-Fi, ricevono l'acknowledgment. In particolare, le ARP requests e la trasmissione dei pacchetti UDP ricevono Acknowledgment come risposta, mentre i frames di controllo no. Per frames di controllo si intendono gli Acknowledgment stessi e, qualora venissero attivati con l'apposita variabile nel codice, i pacchetti RTS (Request-to-Send) e CTS (Clear-to-Send)
 2) Vi sono delle collisioni nella rete? Spiegare perché. Come sei arrivato a questa conclusione? 
+In questa rete non vi sono collisioni, come abbiamo denotato andando a leggere la flag "Retry" all'interno del Frame Control Field dell'header del protocollo 802.11. L'unico momento in cui rischia di esserci una collisione è a t=2s all'interno della simulazione, tuttavia, poiché uno dei client è alla prima trasmissione, effettua prima un'ARP request, con una frame di dimensione inferiore, riducendo il rischio di collisioni. Abbiamo anche testato, che aumentando il numero di pacchetti trasmessi a uno dei due client, in modo che entrambi trasmettessero a t=4s, si sarebbe verificata la collisione. Tuttavia, il test non è all'interno delle catture fornite, in quanto non esplicitamente richiesto.
 
 3) Come si può forzare i nodi ad utilizzare la procedura di handshake RTS/CTS vista in classe? 
     Quale’è il ragionamento dietro questa procedura?  
-
+è presente un parametro chiamato RtsCtsThreshold (classe WifiRemoteStationManager), che costituisce la lunghezza minima in bytes, espressa come unsigned int, che se ecceduta dalla dimensione del pacchetto forza l'utilizzo del sistema di prenotazione per la trasmissione dei pacchetti, attraverso l'invio di un pacchetto per richiedere la trasmissione (RTS) e la ricezione di uno che consenta di cominciare a trasmettere (CTS). Noi abbiamo settato tale parametro a 500 bytes, in quanto nella simulazione i pacchetti UDP, con massima probabilità di collidere, sono lunghi 512 bytes. Settandolo a 50 bytes, avremmo protetto anche ai segmenti ARP, tuttabia la loro probabilità di collidere è molto inferiore.
 4) Forzare l’uso di RTS/CTS nella rete utilizzando il parametro useRtsCts: 
     o Ci sono delle collisioni adesso? 
     o Quali sono i benefici di RTS/CTS? 
     o Dove si può trovare ed analizzare le informazioni relative al Network Allocation Vector? 
-    
-• 5) Calcolare il throughput medio complessivo delle applicazioni
+continuano a non verificarsi collisioni, anche in virtù del sistema di prenotazione della trasmissione. Il sistema di prenotazione evita le collisioni, eliminando il problema dell'hidden terminal: un terminale in trasmissione, che l'altro pronto a trasmettere non rileva. Gli unici pacchetti che possono collidere sono proprio le richieste di trasmissione, tuttavia è poco probabile che ciò avvenga in quanto hanno dimensione esigua (20 B). Inoltre l'overhead aggiunto è marginale (2 SIFS + tempo di trasmissione di RTS e CTS, lungo 14 B). Nell'header di RTS e CTS per il protocollo 802.11, all'interno del campo "Duration", subito dopo Frame Control Field, è contenuta la durata del Network Allocation Vector.
+5) Calcolare il throughput medio complessivo delle applicazioni
+Per il calcolo del Throughput, consideriamo la quantità di dati trasmessa dai client, cioè due frames per ogni client lunghi 512 B. Essendoci due client, vengono trasmessi in tutto 512 B/frame*2 frames/client*2 clients = 2048 B.
+Senza utilizzare RTS e CTS, la trasmissione del primo pacchetto dal nodo 4 avviene a t=1.007892 s, mentre l'ultimo pacchetto, trasmesso dal nodo 3, arriva a t=4.005214, quindi il throughput medio complessivo delle applicazioni è pari a 2048B/2,997322s = 683,28 Bps = 5.47 kbps.
+Utilizzando RTS e CTS il primo pacchetto parte a t= 1.008568, l'ultimo pacchetto arriva a t=, perciò il throughput diventa .
