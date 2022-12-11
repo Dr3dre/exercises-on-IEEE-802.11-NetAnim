@@ -110,7 +110,7 @@ main(int argc, char* argv[]) {
     stack.Install(allNodes);
 
     Ipv4AddressHelper address;
-    address.SetBase("192.168.1.0", "255.255.255.0");        // CHECK correttezza
+    address.SetBase("192.168.1.0", "255.255.255.0");
     Ipv4InterfaceContainer staInterfaces;
     staInterfaces = address.Assign(staDevices);
     Ipv4InterfaceContainer apInterface;
@@ -129,7 +129,7 @@ main(int argc, char* argv[]) {
     UdpEchoServerHelper echoServer(21);
     ApplicationContainer serverApps = echoServer.Install(allNodes.Get(0));
     serverApps.Start(Seconds(0.0));
-    serverApps.Stop(Seconds(10.0));
+    serverApps.Stop(Seconds(7.0));
 
     //     o UDP Echo Client sul Nodo 3 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 2s e 4s 
@@ -140,7 +140,7 @@ main(int argc, char* argv[]) {
     echoClient.SetAttribute("PacketSize", UintegerValue(512));      //  o Packet size: 512 bytes
     ApplicationContainer clientApps = echoClient.Install(allNodes.Get(3));
     clientApps.Start(Seconds(2.0));
-    clientApps.Stop(Seconds(10.0));     
+    clientApps.Stop(Seconds(4.1));     
 
     //     o UDP Echo Client sul Nodo 4 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 1s e 4s 
@@ -151,7 +151,7 @@ main(int argc, char* argv[]) {
     echoClient2.SetAttribute("PacketSize", UintegerValue(512));      //  o Packet size: 512 bytes
     ApplicationContainer clientApps2 = echoClient2.Install(allNodes.Get(4));
     clientApps2.Start(Seconds(1.0));
-    clientApps2.Stop(Seconds(10.0));
+    clientApps2.Stop(Seconds(4.1));
 
     // I nodi si muovono seguendo come modello di mobilità il 2D Random Walk in un’area rettangolare definita
     // dal suo angolo in basso a sinistra (coordinate x= -90 m, y= -90 m)
@@ -214,7 +214,7 @@ main(int argc, char* argv[]) {
     else remove(("wireless-task2-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml").c_str());
 
     NS_LOG_INFO("Run Simulation.");
-    Simulator::Stop(Seconds(15.0));
+    Simulator::Stop(Seconds(7.0));
     Simulator::Run();
     Simulator::Destroy();
     NS_LOG_INFO("Done.");

@@ -87,7 +87,7 @@ main(int argc, char* argv[]) {
     NetDeviceContainer devices = wifi.Install(phy, mac, allNodes);
 
     Ipv4AddressHelper address;
-    address.SetBase("192.168.1.0", "255.255.255.0");        //CHECK correttezza
+    address.SetBase("192.168.1.0", "255.255.255.0");        
     Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
     //     o Assumere che ogni nodo si comporta come un router ideale e scambia la sua routing table in background
@@ -102,8 +102,8 @@ main(int argc, char* argv[]) {
     uint16_t port = 20;
     UdpEchoServerHelper server(port);
     ApplicationContainer serverapp = server.Install(allNodes.Get(0));
-    serverapp.Start(Seconds(1.0));
-    serverapp.Stop(Seconds(10.0));
+    serverapp.Start(Seconds(0.0));
+    serverapp.Stop(Seconds(7.0));
 
     //     o UDP Echo Client sul Nodo 4 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 1s e 2s 
@@ -114,7 +114,7 @@ main(int argc, char* argv[]) {
     client1.SetAttribute("PacketSize", UintegerValue(512));      // o Packet size: 512 bytes 
     ApplicationContainer client1app = client1.Install(allNodes.Get(4));
     client1app.Start(Seconds(1.0));
-    client1app.Stop(Seconds(2.1));        //CHECK correttezza
+    client1app.Stop(Seconds(2.1));        
 
     //     o UDP Echo Client sul Nodo 3 
     //          Invia 2 pacchetti UDP Echo al server ai tempi 2s e 4s 
@@ -131,15 +131,6 @@ main(int argc, char* argv[]) {
     // definita dal suo angolo in basso a sinistra (coordinate x= -90 m, y= -90 m) 
     // e dal suo angolo in alto a destra (x = 90 m, y = 90 m).
     MobilityHelper mobility;
-    // prima configurazione:
-    /*mobility.SetPositionAllocator("ns3::RandomRectanglePositionAllocator",
-        "X", StringValue("ns3::UniformRandomVariable[Min=-90.0|Max=90.0]"),
-        "Y", StringValue("ns3::UniformRandomVariable[Min=-90.0|Max=90.0]"));
-    mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel",
-        "Bounds", RectangleValue(Rectangle(-90, 90, -90, 90)));
-    mobility.Install(allNodes);*/
-
-    // muova configurazione, da wireless-animation.cc
     mobility.SetPositionAllocator("ns3::GridPositionAllocator",
                                   "MinX",
                                   DoubleValue(0.0),
@@ -198,7 +189,7 @@ main(int argc, char* argv[]) {
     else remove(("wireless-task1-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml").c_str());
 
     NS_LOG_INFO("Run Simulation.");
-    Simulator::Stop(Seconds(15.0));
+    Simulator::Stop(Seconds(7.0));
     Simulator::Run();
     Simulator::Destroy();
     NS_LOG_INFO("Done.");
