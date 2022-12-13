@@ -41,8 +41,8 @@ main(int argc, char* argv[]) {
     //             Notare che il valore da utilizzare per la vostra analisi (con e senza RTS/CTS) 
     //             è quello indicato all’inizio del paragrafo del Task 2.
     CommandLine cmd;
-    bool useRtsCts = true;
-    bool verbose = true;
+    bool useRtsCts = false;
+    bool verbose = false;
     bool useNetAnim = false;
     std::string ssid = "TLC2022";
 
@@ -74,8 +74,8 @@ main(int argc, char* argv[]) {
 
     // Il nome della rete (SSID) deve essere passato tramite linea di comando usando il parametro “ssid” 
     // e per le vostre simulazioni deve essere la somma delle vostre matricole in stringa.
-    
-    ssid = std::to_string(1933744 + 1945149 + 1960602 + 1943362);
+    // lasciate la prossima linea di codice che è utile per prendere i numeri e fare la somma
+    //ssid = std::to_string(1933744 + 1945149 + 1960602 + 1943362);
 
     // • Canale: canale wireless di default su ns-3 
     YansWifiChannelHelper channel = YansWifiChannelHelper::Default();
@@ -179,8 +179,8 @@ main(int argc, char* argv[]) {
     // • Informazioni addizionali: 
     //     o Il packet tracer deve essere inserito esclusivamente sul Nodo 4 (uno dei due clients) e 
     //     sull’AP 
-    //per ora ce li teniamo tutti anche qui
-    phy.EnablePcapAll("infrastructure",true);
+    phy.EnablePcap("task2-"+std::string(useRtsCts ? "on" : "off")+"-"+std::to_string(wifiApNode.Get(0)->GetId())+".pcap",apDevices.Get(0),true,true);
+    phy.EnablePcap("task2-"+std::string(useRtsCts ? "on" : "off")+"-"+std::to_string(wifiStaNodes.Get(4)->GetId())+".pcap",staDevices.Get(4),true,true);
 
     //     o NetAnim: se abilitato, la simulazione deve poter generare un file “wireless-task2-rts-<state>.xml” 
     //     (dove <state> è “on” se il parametro useRtsCts è vero oppure in caso contrario “off”)

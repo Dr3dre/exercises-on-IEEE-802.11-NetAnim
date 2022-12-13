@@ -152,7 +152,7 @@ main(int argc, char* argv[]) {
     // • Informazioni addizionali: 
     //     o Il packet tracer deve essere inserito esclusivamente sul Nodo 2 
     // per ora ci teniamo tutte le catture
-    phy.EnablePcapAll("adhoc",true);
+    phy.EnablePcap("task1-"+std::string(useRtsCts ? "on" : "off")+"-"+std::to_string(allNodes.Get(2)->GetId())+".pcap",devices.Get(2),true,true);
 
     //AnimationInterface anim;
     AnimationInterface anim("wireless-task1-rts-" + std::string(useRtsCts ? "on" : "off") + ".xml");
@@ -171,7 +171,6 @@ main(int argc, char* argv[]) {
         //              <id> rappresenta il Node ID del singolo nodo (e.g., “1”, “2”, etc.). 
         for (uint32_t i = 0; i < allNodes.GetN(); i++) {
             Ptr<Node> node = allNodes.Get(i);
-            printf("%d\n",node->GetId());
             if (i == 0) {
                 anim.UpdateNodeDescription(node, "SRV-" + std::to_string(node->GetId()));
                 anim.UpdateNodeColor(node, 255, 0, 0);
