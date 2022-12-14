@@ -51,7 +51,7 @@ main(int argc, char* argv[]) {
     
     UintegerValue rtsctsThreshold = UintegerValue(5000);
     if (useRtsCts) {
-        rtsctsThreshold=UintegerValue(500);
+        rtsctsThreshold=UintegerValue(100);
     }
                 
     Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", rtsctsThreshold);
