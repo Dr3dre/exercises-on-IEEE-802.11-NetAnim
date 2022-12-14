@@ -7,7 +7,7 @@ l'access point sin dall'inizio della sua attività invia continuamente e regolar
 2) Analizzare il beacon frame. Quali sono le sue parti più rilevanti? 
     Specificare il filtro Wireshark ed il file utilizzati per l’analisi. 
 Le parti più rilevanti di un beacon frame sono il nome della rete (SSID)(nel nostro caso uguale alla somma delle matricole = 7782857), l'indirizzo MAC dell'access point (AP) e il beacon interval, uguale a 100 TU = 102.4 ms, ovvero il tempo tra un beacon frame e il successivo. Queste informazioni sono importanti perché permettono ai dispositivi client di identificare la rete e stabilire una connessione con l'AP, e possono anche essere utilizzate dall'amministratore di rete per monitorare e gestire la rete.
-File considerato: infrastructure-2-0.pcap 
+File considerato: task2-off-5.pcap 
 Filtro wireshark: wlan[0]==0x80 
 
 3) Come per il Task 1, forzare l’uso di RTS/CTS nella rete utilizzando il parametro “useRtsCts”: 
