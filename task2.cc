@@ -94,7 +94,7 @@ main(int argc, char* argv[]) {
     //     o Ricorda: la rete opera in infrastructure mode 
     WifiMacHelper mac ;
     Ssid ssidobj = Ssid(ssid);
-    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssidobj), "ActiveProbing", BooleanValue(false),"QosSupported",BooleanValue(false));  //CHECK correttezza
+    mac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssidobj), "ActiveProbing", BooleanValue(false),"QosSupported",BooleanValue(false)); 
 
     NetDeviceContainer staDevices;
     staDevices = wifi.Install(phy, mac, wifiStaNodes);
